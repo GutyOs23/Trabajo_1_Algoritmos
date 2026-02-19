@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Álgebra Abstracta | Oscar Brandon Gutierrez Paz</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <img src="imagenes/ucb_imagen.png" alt="Logo Universidad">
+            </div>
+            <div class="info">
+                <h1>Universidad Católica Boliviana</h1>
+                <p><strong>Estudiante:</strong> Oscar Brandon Gutierrez Paz</p>
+                <p><strong>Asignatura:</strong> Analisis de Algoritmos</p>
+                <p><strong>Docente:</strong> Yamil Vicente Miguel Cardenas</p>
+            </div>
+        </div>
+    </header>
+
+    <div style="text-align: center;">
+        <a href="grafos.html" class="boton">IR A TEORÍA DE GRAFOS</a>
+    </div>
+
+    <h1 class="main-title">ÁLGEBRA ABSTRACTA</h1>
+
+    <section>
+        <h2>¿Qué es el Álgebra Abstracta?</h2>
+        <div class="content">
+            <div class="texto">
+                <p>El álgebra abstracta es una rama de las matemáticas que estudia las estructuras algebraicas como grupos, anillos, cuerpos y espacios vectoriales. A diferencia del álgebra elemental que se enfoca en operaciones con números reales, el álgebra abstracta generaliza estos conceptos para estudiar las propiedades de las operaciones matemáticas en conjuntos abstractos.</p>
+                <p>Su desarrollo comenzó en el siglo XIX con matemáticos como Évariste Galois y Niels Henrik Abel, quienes sentaron las bases para entender la resolubilidad de ecuaciones polinómicas. Hoy en día, el álgebra abstracta es fundamental en múltiples áreas como la criptografía, la teoría de códigos y la física teórica.</p>
+            </div>
+            <div class="imagen">
+                <img src="imagenes/que_es.jfif" alt="Imagen representativa" onerror="this.src='https://via.placeholder.com/400x300?text=Álgebra+Abstracta'">
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Las 5 Propiedades Fundamentales</h2>
+        
+        <div class="propiedad">
+            <h3>1. Propiedad de Clausura</h3>
+            <div class="propiedad-contenido">
+                <div class="texto">
+                    <p>La propiedad de clausura establece que al realizar una operación entre dos elementos de un conjunto, el resultado también pertenece al mismo conjunto. Es decir, el conjunto es cerrado bajo la operación definida.</p>
+                </div>
+                <div class="formula-grande">∀ a, b ∈ G ⇒ a * b ∈ G</div>
+            </div>
+        </div>
+        
+        <div class="propiedad">
+            <h3>2. Propiedad Asociativa</h3>
+            <div class="propiedad-contenido">
+                <div class="texto">
+                    <p>La propiedad asociativa indica que el resultado de una operación no depende de cómo se agrupen los elementos. Es decir, el orden de los paréntesis no afecta el resultado final.</p>
+                </div>
+                <div class="formula-grande">(a * b) * c = a * (b * c)</div>
+            </div>
+        </div>
+        
+        <div class="propiedad">
+            <h3>3. Elemento Neutro</h3>
+            <div class="propiedad-contenido">
+                <div class="texto">
+                    <p>El elemento neutro es un elemento especial que, al operarlo con cualquier otro elemento, lo deja igual. Como el "0" en la suma o el "1" en la multiplicación.</p>
+                </div>
+                <div class="formula-grande">∃ e ∈ G : a * e = e * a = a</div>
+            </div>
+        </div>
+        
+        <div class="propiedad">
+            <h3>4. Elemento Inverso</h3>
+            <div class="propiedad-contenido">
+                <div class="texto">
+                    <p>El elemento inverso establece que para cada elemento existe otro que, al operarlos, da como resultado el elemento neutro. Como el opuesto en la suma (-a) o el recíproco en la multiplicación (1/a).</p>
+                </div>
+                <div class="formula-grande">∀ a ∈ G, ∃ a⁻¹ ∈ G : a * a⁻¹ = a⁻¹ * a = e</div>
+            </div>
+        </div>
+        
+        <div class="propiedad">
+            <h3>5. Propiedad Conmutativa</h3>
+            <div class="propiedad-contenido">
+                <div class="texto">
+                    <p>La propiedad conmutativa indica que el orden de los elementos no altera el resultado. a * b es igual a b * a. Cuando un grupo cumple esto, se llama grupo abeliano.</p>
+                </div>
+                <div class="formula-grande">a * b = b * a</div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Grupos Abelianos</h2>
+        <div class="content" style="flex-direction: column;">
+            <div class="texto" style="width: 100%;">
+                <p>Un grupo abeliano (o grupo conmutativo) es una estructura algebraica que cumple todas las propiedades de grupo más la propiedad conmutativa. Recibe su nombre en honor al matemático noruego Niels Henrik Abel.</p>
+                <p>Ejemplos: números enteros con la suma (ℤ, +), números reales sin cero con la multiplicación (ℝ\{0}, ×), y vectores en el plano con la suma.</p>
+            </div>
+            
+            <div style="text-align: center; margin: 20px 0; padding: 20px; background: rgba(0, 40, 0, 0.5); border-radius: 15px; border: 2px solid #00ff00; width: 100%;">
+                <h3 style="color: #00ff00; margin-bottom: 20px;">Video: Grupos Abelianos</h3>
+                <a href="https://youtu.be/7bYS-b4avrQ" target="_blank" class="boton-small">▶ VER VIDEO</a>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Ejercicio Resuelto</h2>
+        <div class="ejemplo">
+            <p>Ejercicio para explicar toda la informacion</p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="https://youtu.be/CFwiHzzWnKc?si=4bNwXUoY9BvCX74M" target="_blank" class="boton-small">▶ VER EJERCICIO RESUELTO</a>
+            </div>
+            
+            <div class="imagen">
+                <img src="imagenes/ejercicio.jpg" alt="Ejercicio resuelto" onerror="this.src='https://via.placeholder.com/400x300?text=Ejercicio+Resuelto'">
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Estructura de Cuerpo</h2>
+        <div class="content">
+            <div class="texto">
+                <p>Un cuerpo (campo) es una estructura con dos operaciones (suma y multiplicación) que cumplen:</p>
+                <ul>
+                    <li>(F, +) es un grupo abeliano (neutro 0)</li>
+                    <li>(F \ {0}, ×) es un grupo abeliano (neutro 1)</li>
+                    <li>La multiplicación es distributiva respecto a la suma</li>
+                </ul>
+                <p><strong>Propiedad Distributiva:</strong> a·(b+c) = (a·b)+(a·c)</p>
+                <p>Ejemplos: ℚ, ℝ, ℂ</p>
+            </div>
+            <div class="imagen">
+                <img src="imagenes/cuerpos.jpg" alt="Estructura de cuerpo" onerror="this.src='https://via.placeholder.com/400x300?text=Cuerpos'">
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="https://youtu.be/9ssNCCZRjM0?si=Tikjp6Ly3I3J5Xe5" target="_blank" class="boton-small">▶ VER VIDEO SOBRE CUERPOS</a>
+        </div>
+    </section>
+
+    <section>
+        <h2>Aplicaciones</h2>
+        <div class="aplicaciones">
+            <div class="aplicacion">
+                <h3>Criptografía</h3>
+                <p>RSA y criptografía de curva elíptica (ECC) se basan en teoría de grupos y cuerpos finitos.</p>
+                <div class="imagen small">
+                    <img src="imagenes/criptografia.jfif" alt="Criptografía" onerror="this.src='https://via.placeholder.com/280x280?text=Criptografía'">
+                </div>
+            </div>
+            <div class="aplicacion">
+                <h3>Teoría de Códigos</h3>
+                <p>Códigos correctores de errores como Hamming y BCH utilizan estructuras algebraicas.</p>
+                <div class="imagen small">
+                    <img src="imagenes/teoria_codigos.jfif" alt="Teoría de códigos" onerror="this.src='https://via.placeholder.com/280x280?text=Teoría+de+Códigos'">
+                </div>
+            </div>
+            <div class="aplicacion">
+                <h3>Física Cuántica</h3>
+                <p>Teoría de grupos para describir simetrías y el modelo estándar de partículas.</p>
+                <div class="imagen small">
+                    <img src="imagenes/cuantica.jfif" alt="Física cuántica" onerror="this.src='https://via.placeholder.com/280x280?text=Física+Cuántica'">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Recursos y Relación con Algoritmos</h2>
+        <div class="content">
+            <div class="texto">
+                <h3 style="color:#00ff00;">Libros recomendados:</h3>
+                <ul>
+                    <li>"Abstract Algebra" - Dummit & Foote</li>
+                    <li>"A First Course in Abstract Algebra" - Fraleigh</li>
+                </ul>
+                
+                <h3 style="color:#00ff00; margin-top:20px;">Relación con Análisis de Algoritmos:</h3>
+                <ul>
+                    <li>Algoritmos criptográficos: RSA, Diffie-Hellman</li>
+                    <li>Complejidad computacional en estructuras algebraicas</li>
+                    <li>Optimización por propiedades conmutativas/asociativas</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

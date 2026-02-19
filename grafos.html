@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teoría de Grafos | Oscar Brandon Gutierrez Paz</title>
+    <link rel="stylesheet" href="estilos.css">
+    <style>
+        .grafo-simple { display: flex; justify-content: center; gap: 25px; margin: 30px 0; flex-wrap: wrap; }
+        .nodo-ejemplo { background: rgba(0,255,0,0.1); border: 2px solid #00ff00; border-radius: 50%; width: 70px; height: 70px; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: bold; color: #00ff00; box-shadow: 0 0 15px rgba(0,255,0,0.4); position: relative; transition: all 0.3s; }
+        .nodo-ejemplo:hover { transform: scale(1.1); box-shadow: 0 0 25px #00ff00; }
+        .nodo-ejemplo::after { content: '→'; position: absolute; right: -30px; color: #00ff00; font-size: 28px; }
+        .nodo-ejemplo:last-child::after { content: none; }
+        .representacion { display: flex; gap: 30px; justify-content: center; margin: 30px 0; flex-wrap: wrap; }
+        .representacion-item { background: rgba(0,20,0,0.7); padding: 20px; border-radius: 10px; border: 1px solid #00ff00; text-align: center; flex: 1; min-width: 250px; transition: all 0.3s; }
+        .representacion-item:hover { transform: translateY(-3px); box-shadow: 0 0 20px rgba(0,255,0,0.3); }
+        .representacion-item h4 { color: #00ff00; margin-bottom: 15px; }
+        .matriz-ejemplo { font-family: 'Courier New', monospace; color: #00ff00; font-size: 18px; line-height: 2; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 8px; border: 1px solid #00ff00; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <img src="imagenes/ucb_imagen.png" alt="Logo Universidad">
+            </div>
+            <div class="info">
+                <h1>Universidad Católica Boliviana</h1>
+                <p><strong>Estudiante:</strong> Oscar Brandon Gutierrez Paz</p>
+                <p><strong>Asignatura:</strong> Analisis de Algoritmos</p>
+                <p><strong>Docente:</strong> Yamil Vicente Miguel Cardenas</p>
+            </div>
+        </div>
+    </header>
+
+    <div style="text-align: center; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 20px 0;">
+        <a href="index.html" class="boton">ÁLGEBRA ABSTRACTA</a>
+        <a href="interaccion.html" class="boton" style="background: linear-gradient(45deg, #1a4d1a, #2a6f2a); border-color: #00ff00; box-shadow: 0 0 25px #00ff00;">CONSTRUCTOR INTERACTIVO</a>
+    </div>
+
+    <h1 class="main-title">TEORÍA DE GRAFOS</h1>
+
+    <section>
+        <h2>¿Qué es un Grafo?</h2>
+        <div class="content">
+            <div class="texto">
+                <p>Un <strong style="color:#00ff00;">grafo</strong> es una estructura matemática G = (V, E) donde:</p>
+                <ul>
+                    <li><strong style="color:#00ff00;">V (Vértices):</strong> Elementos u objetos</li>
+                    <li><strong style="color:#00ff00;">E (Aristas):</strong> Conexiones entre vértices</li>
+                </ul>
+                <p>Los grafos modelan redes sociales, mapas, internet, etc.</p>
+            </div>
+            <div class="imagen">
+                <img src="imagenes/grafo_t.png" alt="Grafo" onerror="this.src='https://via.placeholder.com/400x300?text=Grafo'">
+            </div>
+        </div>
+        
+        <div style="margin-top: 30px; text-align: center;">
+            <h3 style="color:#00ff00;">Ejemplo de Nodos:</h3>
+            <div class="grafo-simple">
+                <div class="nodo-ejemplo">A</div>
+                <div class="nodo-ejemplo">B</div>
+                <div class="nodo-ejemplo">C</div>
+                <div class="nodo-ejemplo">D</div>
+            </div>
+            <p>A → B → C → D (Grafo Dirigido)</p>
+        </div>
+    </section>
+
+    <section>
+        <h2>Componentes</h2>
+        
+        <div class="propiedad">
+            <h3> Vértices (Nodos)</h3>
+            <div class="propiedad-contenido">
+                <p>Unidades fundamentales. Representan entidades.</p>
+                <div class="formula-grande">V = {v₁, v₂, ..., vₙ}</div>
+            </div>
+        </div>
+        
+        <div class="propiedad">
+            <h3> Aristas</h3>
+            <div class="propiedad-contenido">
+                <p>Conexiones entre vértices. Pueden ser dirigidas o no.</p>
+                <div class="formula-grande">E = {(u,v) | u,v ∈ V}</div>
+            </div>
+        </div>
+        
+        <div class="propiedad">
+            <h3> Grado</h3>
+            <div class="propiedad-contenido">
+                <p>Número de aristas que inciden en un vértice.</p>
+                <div class="formula-grande">deg(v) = |{e ∈ E : v ∈ e}|</div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Tipos de Grafos</h2>
+        
+        <div class="aplicaciones" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+            <div class="aplicacion">
+                <h3>No Dirigido</h3>
+                <p>Relación bidireccional. Ej: Red de amistades</p>
+                <div class="imagen small">
+                    <img src="imagenes/grafo_nd.webp" alt="No dirigido" onerror="this.src='https://via.placeholder.com/280x280?text=No+Dirigido'">
+                </div>
+            </div>
+            
+            <div class="aplicacion">
+                <h3>Dirigido</h3>
+                <p>Relación unidireccional. Ej: Seguidores en Twitter</p>
+                <div class="imagen small">
+                    <img src="imagenes/grafo_d.png" alt="Dirigido" onerror="this.src='https://via.placeholder.com/280x280?text=Dirigido'">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Aplicaciones Reales</h2>
+        
+        <div class="aplicaciones">
+            <div class="aplicacion">
+                <h3>🌐 Redes Sociales</h3>
+                <p>Amistades, recomendaciones, comunidades</p>
+                <div class="imagen small">
+                    <img src="imagenes/redes_so.avif" alt="Redes" onerror="this.src='https://via.placeholder.com/280x280?text=Redes'">
+                </div>
+            </div>
+            
+            <div class="aplicacion">
+                <h3>🗺️ GPS</h3>
+                <p>Rutas óptimas, tráfico, mapas</p>
+                <div class="imagen small">
+                    <img src="imagenes/sistema_nv.jpg" alt="GPS" onerror="this.src='https://via.placeholder.com/280x280?text=GPS'">
+                </div>
+            </div>
+            
+            <div class="aplicacion">
+                <h3>⚡ Redes Eléctricas</h3>
+                <p>Distribución, optimización de flujo</p>
+                <div class="imagen small">
+                    <img src="imagenes/redes_elec.jfif" alt="Eléctrica" onerror="this.src='https://via.placeholder.com/280x280?text=Eléctrica'">
+                </div>
+            </div>
+            
+            <div class="aplicacion">
+                <h3>🧬 Bioinformática</h3>
+                <p>Interacciones de proteínas, redes metabólicas</p>
+                <div class="imagen small">
+                    <img src="imagenes/bio.jpg" alt="Bio" onerror="this.src='https://via.placeholder.com/280x280?text=Bio'">
+                </div>
+            </div>
+            
+            <div class="aplicacion">
+                <h3>🕸️ World Wide Web</h3>
+                <p>PageRank, estructura de internet</p>
+                <div class="imagen small">
+                    <img src="imagenes/word.jfif" alt="Web" onerror="this.src='https://via.placeholder.com/280x280?text=Web'">
+                </div>
+            </div>
+            
+            <div class="aplicacion">
+                <h3>🎮 Videojuegos</h3>
+                <p>Pathfinding, IA, niveles</p>
+                <div class="imagen small">
+                    <img src="imagenes/pac_man.png" alt="Videojuegos" onerror="this.src='https://via.placeholder.com/280x280?text=Juegos'">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Recursos</h2>
+        
+        <div class="content">
+            <div class="texto">
+                <h3 style="color:#00ff00;">📚 Libros:</h3>
+                <ul>
+                    <li>"Introduction to Graph Theory" - Douglas West</li>
+                    <li>"Graph Theory with Applications" - Bondy & Murty</li>
+                    <li>"Algorithms" - Dasgupta, Papadimitriou & Vazirani</li>
+                </ul>
+                
+                <h3 style="color:#00ff00; margin-top:20px;">🔧 Herramientas:</h3>
+                <ul>
+                    <li>Gephi - Visualización</li>
+                    <li>NetworkX (Python)</li>
+                    <li>Graphviz</li>
+                </ul>
+            </div>
+            <div class="imagen">
+                <img src="imagenes/final.jfif" alt="Recursos" onerror="this.src='https://via.placeholder.com/400x300?text=Recursos'">
+            </div>
+        </div>
+    </section>
+</body>
+</html>
