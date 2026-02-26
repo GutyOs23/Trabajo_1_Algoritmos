@@ -35,6 +35,99 @@
             border: 2px solid;
             font-weight: bold;
         }
+
+        /* Estilos para la matriz */
+        .matriz-container {
+            margin: 30px 0;
+            padding: 20px;
+            background: #0a1a0a;
+            border: 2px solid #00ff00;
+            border-radius: 15px;
+            box-shadow: 0 0 15px #00ff00;
+            overflow-x: auto;
+        }
+
+        .matriz-titulo {
+            color: #00ff00;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        .matriz {
+            display: grid;
+            gap: 5px;
+            justify-content: center;
+            font-family: 'Courier New', monospace;
+        }
+
+        .matriz-fila {
+            display: grid;
+            grid-template-columns: 60px repeat(10, 70px) 70px;
+            gap: 2px;
+            align-items: center;
+        }
+
+        .matriz-header, .matriz-col-header, .matriz-celda, .matriz-suma {
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+
+        .matriz-header {
+            color: #00ff00;
+            font-size: 16px;
+            background: #0a1a0a;
+        }
+
+        .matriz-col-header {
+            background: #1a3a1a;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+        }
+
+        .matriz-celda {
+            background: #0a1a0a;
+            color: #ffffff;
+            border: 1px solid #00ff00;
+            min-width: 60px;
+        }
+
+        .matriz-suma {
+            background: #1a3a1a;
+            color: #00ff00;
+            border: 2px solid #00ff00;
+            font-weight: bold;
+        }
+
+        .matriz-vacia {
+            color: #666;
+            text-align: center;
+            padding: 30px;
+            font-size: 18px;
+            border: 2px dashed #00ff00;
+            border-radius: 10px;
+        }
+
+        .btn-actualizar {
+            background: #0a1a0a;
+            color: #00ff00;
+            border: 2px solid #00ff00;
+            padding: 10px 20px;
+            margin: 10px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .btn-actualizar:hover {
+            background: #00ff00;
+            color: #0a1a0a;
+            box-shadow: 0 0 20px #00ff00;
+        }
     </style>
 </head>
 <body>
@@ -137,6 +230,14 @@
     <!-- Canvas -->
     <div class="canvas-container">
         <canvas id="grafoCanvas"></canvas>
+    </div>
+
+    <!-- MATRIZ DE ADYACENCIA -->
+    <div class="matriz-container">
+        <h2 class="matriz-titulo">📊 MATRIZ DE ADYACENCIA</h2>
+        <div id="matrizAdyacencia" class="matriz-vacia">
+            No hay nodos para mostrar la matriz
+        </div>
     </div>
 
     <!-- Lista de conexiones -->
@@ -253,7 +354,6 @@
                 const valorAB = parseFloat(document.getElementById('valorAB').value);
                 const valorBA = parseFloat(document.getElementById('valorBA').value);
                 
-                // Flecha A → B (naranja)
                 conexiones.push({
                     origen: origenId,
                     destino: destinoId,
@@ -263,7 +363,6 @@
                     id: Date.now() + Math.random()
                 });
                 
-                // Flecha B → A (verde)
                 conexiones.push({
                     origen: destinoId,
                     destino: origenId,
@@ -319,10 +418,94 @@
             document.getElementById('contadorNodos').innerText = nodos.length;
             document.getElementById('contadorConexiones').innerText = conexiones.length;
             actualizarListaConexiones();
+            actualizarMatriz();
             dibujarGrafo();
         }
         
-        // ===== DIBUJAR - VERSIÓN MEJORADA =====
+        // ===== MATRIZ DE ADYACENCIA - VERSIÓN ORDENADA =====
+        function actualizarMatriz() {
+            const divMatriz = document.getElementById('matrizAdyacencia');
+            
+            if (nodos.length === 0) {
+                divMatriz.innerHTML = '<div class="matriz-vacia">No hay nodos para mostrar la matriz</div>';
+                return;
+            }
+            
+            // Ordenar nodos por ID
+            const nodosOrdenados = [...nodos].sort((a, b) => a.id - b.id);
+            const n = nodosOrdenados.length;
+            
+            // Crear matriz de adyacencia
+            const matriz = Array(n).fill().map(() => Array(n).fill(0));
+            
+            // Llenar matriz con los valores de las conexiones
+            conexiones.forEach(conn => {
+                const idxOrigen = nodosOrdenados.findIndex(n => n.id === conn.origen);
+                const idxDestino = nodosOrdenados.findIndex(n => n.id === conn.destino);
+                
+                if (idxOrigen !== -1 && idxDestino !== -1) {
+                    matriz[idxOrigen][idxDestino] += conn.valor;
+                }
+            });
+            
+            // Calcular sumatorias
+            const sumaFilas = matriz.map(fila => fila.reduce((a, b) => a + b, 0));
+            const sumaColumnas = Array(n).fill(0);
+            for (let j = 0; j < n; j++) {
+                for (let i = 0; i < n; i++) {
+                    sumaColumnas[j] += matriz[i][j];
+                }
+            }
+            
+            // Generar HTML de la matriz
+            let html = '<div class="matriz" style="display: inline-block;">';
+            
+            // Encabezado
+            html += '<div class="matriz-fila">';
+            html += '<div class="matriz-header">↓ Nodo</div>';
+            for (let j = 0; j < n; j++) {
+                html += `<div class="matriz-col-header">→ ${nodosOrdenados[j].id}</div>`;
+            }
+            html += '<div class="matriz-header">Σ Fila</div>';
+            html += '</div>';
+            
+            // Filas de la matriz
+            for (let i = 0; i < n; i++) {
+                html += '<div class="matriz-fila">';
+                html += `<div class="matriz-header">${nodosOrdenados[i].id} →</div>`;
+                
+                for (let j = 0; j < n; j++) {
+                    const valor = matriz[i][j];
+                    const color = valor > 0 ? (i === j ? '#ff33ff' : '#00ff00') : '#666';
+                    html += `<div class="matriz-celda" style="color: ${color};">${valor.toFixed(1)}</div>`;
+                }
+                
+                html += `<div class="matriz-suma">${sumaFilas[i].toFixed(1)}</div>`;
+                html += '</div>';
+            }
+            
+            // Fila de sumas de columnas
+            html += '<div class="matriz-fila">';
+            html += '<div class="matriz-header">Σ Col</div>';
+            for (let j = 0; j < n; j++) {
+                html += `<div class="matriz-suma">${sumaColumnas[j].toFixed(1)}</div>`;
+            }
+            html += '<div class="matriz-header"></div>';
+            html += '</div>';
+            
+            html += '</div>';
+            
+            // Información adicional (opcional)
+            html += `<div style="text-align: center; margin-top: 15px; color: #00ff00; font-size: 14px;">
+                <span style="color:#ffaa00;">Naranja: Salidas</span> | 
+                <span style="color:#44ff44;">Verde: Entradas</span> | 
+                <span style="color:#ff33ff;">Rosado: Bucles</span>
+            </div>`;
+            
+            divMatriz.innerHTML = html;
+        }
+        
+        // ===== DIBUJAR GRAFO =====
         function dibujarFlecha(x, y, angulo, color) {
             ctx.save();
             ctx.translate(x, y);
@@ -399,57 +582,41 @@
                     const conexionesDelPar = paresBidireccionales.get(parId) || [];
                     const esBidireccional = conexionesDelPar.length >= 2;
                     
-                    // Calcular ángulo base entre nodos
                     const anguloBase = Math.atan2(destino.y - origen.y, destino.x - origen.x);
-                    
-                    // Distancia entre nodos
                     const distancia = Math.hypot(destino.x - origen.x, destino.y - origen.y);
-                    
-                    // ===== SEPARACIÓN MUCHO MÁS NOTABLE =====
-                    // Aumentamos el factor de separación
                     const separacion = Math.min(80, distancia * 0.45);
                     
                     if (esBidireccional) {
-                        // ===== DOS VÍAS COMPLETAMENTE SEPARADAS =====
-                        
-                        // Vector perpendicular (normalizado)
                         const perpX = -(destino.y - origen.y) / distancia;
                         const perpY = (destino.x - origen.x) / distancia;
                         
-                        // Puntos de control para las curvas - MÁS SEPARADOS
                         let ctrlX, ctrlY;
                         let anguloOffset;
                         
                         if (conn.color === '#ffaa00') {
-                            // VÍA SUPERIOR (naranja) - A → B - MÁS ARRIBA
-                            anguloOffset = -0.5; // Ángulo de salida más pronunciado
+                            anguloOffset = -0.5;
                             ctrlX = (origen.x + destino.x) / 2 + perpX * separacion * 1.8;
                             ctrlY = (origen.y + destino.y) / 2 + perpY * separacion * 1.8;
                         } else {
-                            // VÍA INFERIOR (verde) - B → A - MÁS ABAJO
-                            anguloOffset = 0.5; // Ángulo de salida más pronunciado
+                            anguloOffset = 0.5;
                             ctrlX = (origen.x + destino.x) / 2 + perpX * separacion * 1.8;
                             ctrlY = (origen.y + destino.y) / 2 + perpY * separacion * 1.8;
                         }
                         
-                        // Calcular puntos de inicio y fin con offset pronunciado
                         let startX, startY, endX, endY;
                         
                         if (conn.color === '#ffaa00') {
-                            // A → B: sale muy arriba de A y llega muy arriba de B
                             startX = origen.x + Math.cos(anguloBase + anguloOffset) * origen.radio;
                             startY = origen.y + Math.sin(anguloBase + anguloOffset) * origen.radio;
                             endX = destino.x + Math.cos(anguloBase + Math.PI + anguloOffset) * destino.radio;
                             endY = destino.y + Math.sin(anguloBase + Math.PI + anguloOffset) * destino.radio;
                         } else {
-                            // B → A: sale muy abajo de B y llega muy abajo de A
                             startX = origen.x + Math.cos(anguloBase + anguloOffset) * origen.radio;
                             startY = origen.y + Math.sin(anguloBase + anguloOffset) * origen.radio;
                             endX = destino.x + Math.cos(anguloBase + Math.PI + anguloOffset) * destino.radio;
                             endY = destino.y + Math.sin(anguloBase + Math.PI + anguloOffset) * destino.radio;
                         }
                         
-                        // Dibujar la curva
                         ctx.beginPath();
                         ctx.strokeStyle = conn.color;
                         ctx.lineWidth = 3;
@@ -458,18 +625,12 @@
                         ctx.quadraticCurveTo(ctrlX, ctrlY, endX, endY);
                         ctx.stroke();
                         
-                        // ===== FLECHA HASTA EL FINAL =====
-                        // La flecha se dibuja en el punto final, justo en el borde del nodo
                         const arrowX = endX;
                         const arrowY = endY;
-                        
-                        // Calcular el ángulo de la flecha basado en la dirección de entrada al nodo
                         const anguloFlecha = Math.atan2(endY - ctrlY, endX - ctrlX);
                         
-                        // Dibujar flecha justo en el borde del nodo
                         dibujarFlecha(arrowX, arrowY, anguloFlecha, conn.color);
                         
-                        // Posición del valor (más alejado de las líneas)
                         const valorT = 0.5;
                         const valorX = (1-valorT)*(1-valorT)*startX + 2*(1-valorT)*valorT*ctrlX + valorT*valorT*endX;
                         const valorY = (1-valorT)*(1-valorT)*startY + 2*(1-valorT)*valorT*ctrlY + valorT*valorT*endY;
@@ -479,7 +640,6 @@
                         ctx.shadowBlur = 12;
                         ctx.shadowColor = conn.color;
                         
-                        // Posicionar el valor más alejado
                         if (conn.color === '#ffaa00') {
                             ctx.fillText(conn.valor, valorX + 20, valorY - 35);
                         } else {
@@ -487,8 +647,6 @@
                         }
                         
                     } else {
-                        // CONEXIÓN SIMPLE - UNA SOLA VÍA
-                        
                         const startX = origen.x + Math.cos(anguloBase) * origen.radio;
                         const startY = origen.y + Math.sin(anguloBase) * origen.radio;
                         const endX = destino.x - Math.cos(anguloBase) * destino.radio;
@@ -503,12 +661,10 @@
                         ctx.stroke();
                         ctx.setLineDash([]);
                         
-                        // Flecha justo en el borde del nodo
                         const arrowX = endX;
                         const arrowY = endY;
                         dibujarFlecha(arrowX, arrowY, anguloBase, conn.color);
                         
-                        // Valor
                         const midX = (origen.x + destino.x) / 2;
                         const midY = (origen.y + destino.y) / 2;
                         
