@@ -17,6 +17,19 @@
             box-shadow: 0 0 20px #00ff00;
             position: relative;
             overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .canvas-container.modo-eliminar {
+            border-color: #ff3333;
+            box-shadow: 0 0 30px #ff3333;
+            animation: parpadeoEliminar 1s infinite;
+        }
+        
+        @keyframes parpadeoEliminar {
+            0% { border-color: #ff3333; box-shadow: 0 0 20px #ff3333; }
+            50% { border-color: #ff6666; box-shadow: 0 0 40px #ff6666; }
+            100% { border-color: #ff3333; box-shadow: 0 0 20px #ff3333; }
         }
         
         #grafoCanvas {
@@ -64,16 +77,17 @@
 
         .matriz-fila {
             display: grid;
-            grid-template-columns: 60px repeat(10, 70px) 70px;
+            grid-template-columns: 80px repeat(10, 80px) 100px 100px 100px 150px;
             gap: 2px;
             align-items: center;
         }
 
-        .matriz-header, .matriz-col-header, .matriz-celda, .matriz-suma {
+        .matriz-header, .matriz-col-header, .matriz-celda, .matriz-suma, .matriz-grado, .matriz-tipo {
             padding: 10px;
             text-align: center;
             font-weight: bold;
             border-radius: 5px;
+            word-break: break-word;
         }
 
         .matriz-header {
@@ -91,13 +105,50 @@
         .matriz-celda {
             background: #0a1a0a;
             color: #ffffff;
-            border: 1px solid #00ff00;
-            min-width: 60px;
+            border: 1px solid;
+            min-width: 70px;
+        }
+
+        .matriz-celda.unidireccional-origen {
+            border-color: #ffaa00;
+            background: rgba(255, 170, 0, 0.1);
+        }
+
+        .matriz-celda.unidireccional-destino {
+            border-color: #44ff44;
+            background: rgba(68, 255, 68, 0.1);
+        }
+
+        .matriz-celda.bidireccional {
+            border-color: #ffaa00;
+            border-width: 2px;
+            background: linear-gradient(45deg, rgba(255, 170, 0, 0.1), rgba(68, 255, 68, 0.1));
+        }
+
+        .matriz-celda.bucle {
+            border-color: #ff33ff;
+            background: rgba(255, 51, 255, 0.1);
+            border-width: 2px;
         }
 
         .matriz-suma {
             background: #1a3a1a;
             color: #00ff00;
+            border: 2px solid #00ff00;
+            font-weight: bold;
+        }
+
+        .matriz-grado {
+            background: #2a4a2a;
+            color: #ffff00;
+            border: 2px solid #ffff00;
+            font-weight: bold;
+            text-shadow: 0 0 10px #ffff00;
+        }
+
+        .matriz-tipo {
+            background: #0a2a0a;
+            color: #ffffff;
             border: 2px solid #00ff00;
             font-weight: bold;
         }
@@ -111,22 +162,226 @@
             border-radius: 10px;
         }
 
-        .btn-actualizar {
+        /* Panel de exportación/importación */
+        .export-panel {
             background: #0a1a0a;
+            border: 2px solid #00ff00;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 0 20px #00ff00;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .export-btn {
+            background: #1a3a1a;
             color: #00ff00;
             border: 2px solid #00ff00;
-            padding: 10px 20px;
-            margin: 10px 0;
+            padding: 12px 25px;
             border-radius: 10px;
             cursor: pointer;
             font-weight: bold;
+            font-size: 16px;
             transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .btn-actualizar:hover {
+        .export-btn:hover {
             background: #00ff00;
             color: #0a1a0a;
             box-shadow: 0 0 20px #00ff00;
+        }
+
+        .export-btn.importar {
+            border-color: #44ff44;
+        }
+
+        .export-btn.importar:hover {
+            background: #44ff44;
+        }
+
+        .export-btn.limpiar {
+            border-color: #ff3333;
+        }
+
+        .export-btn.limpiar:hover {
+            background: #ff3333;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        /* Panel de edición contextual */
+        .context-menu {
+            position: fixed;
+            background: #0a1a0a;
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 0 30px #00ff00;
+            z-index: 1000;
+            min-width: 250px;
+            display: none;
+        }
+
+        .context-menu.active {
+            display: block;
+        }
+
+        .context-menu-titulo {
+            color: #00ff00;
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #00ff00;
+        }
+
+        .context-menu-input {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            background: #0a0f0a;
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .context-menu-botones {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .context-menu-btn {
+            padding: 8px 15px;
+            border: 2px solid #00ff00;
+            border-radius: 5px;
+            background: transparent;
+            color: #00ff00;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+        }
+
+        .context-menu-btn:hover {
+            background: #00ff00;
+            color: #0a1a0a;
+        }
+
+        .context-menu-btn.cancelar {
+            border-color: #ff3333;
+            color: #ff3333;
+        }
+
+        .context-menu-btn.cancelar:hover {
+            background: #ff3333;
+            color: #0a1a0a;
+        }
+
+        /* Modal de edición de nodo */
+        .modal-edicion {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #0a1a0a;
+            border: 3px solid #00ff00;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 0 50px #00ff00;
+            z-index: 1000;
+            min-width: 350px;
+            display: none;
+        }
+
+        .modal-edicion.active {
+            display: block;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 999;
+            display: none;
+        }
+
+        .modal-overlay.active {
+            display: block;
+        }
+
+        .modal-titulo {
+            color: #00ff00;
+            font-size: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background: #0a0f0a;
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .modal-select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background: #0a0f0a;
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .modal-botones {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .modal-boton {
+            padding: 10px 20px;
+            border: 2px solid #00ff00;
+            border-radius: 8px;
+            background: transparent;
+            color: #00ff00;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .modal-boton:hover {
+            background: #00ff00;
+            color: #0a1a0a;
+        }
+
+        .modal-boton.cancelar {
+            border-color: #ff3333;
+            color: #ff3333;
+        }
+
+        .modal-boton.cancelar:hover {
+            background: #ff3333;
+            color: #0a1a0a;
         }
     </style>
 </head>
@@ -153,16 +408,58 @@
 
     <h1 class="main-title">CONSTRUCTOR DE GRAFOS</h1>
     
-    <!-- Instrucciones rápidas -->
+    <!-- Instrucciones rápidas actualizadas -->
     <div class="instruccion">
-        <p><strong>CLICK:</strong> Crea nodo | <strong>CLICK + CLICK:</strong> Conecta nodos | <strong>TECLA D + CLICK:</strong> Elimina nodo | <strong>ESC:</strong> Cancela</p>
+        <p><strong>CLICK:</strong> Crea nodo | <strong>CLICK + CLICK:</strong> Conecta nodos | <strong>DOBLE CLICK:</strong> Crea bucle | <strong>CLICK DERECHO EN NODO:</strong> Editar nodo | <strong>CLICK DERECHO EN VALOR:</strong> Editar valor (uni, bi o bucle) | <strong>TECLA D:</strong> Activar/desactivar modo eliminar | <strong>ESC:</strong> Cancelar</p>
     </div>
 
     <!-- Leyenda de colores -->
     <div class="leyenda">
-        <span><span style="color:#ffaa00;"> A → B</span> (naranja)</span>
-        <span><span style="color:#44ff44;">B → A</span> (verde)</span>
-        <span><span style="color:#ff33ff;">Bucle</span> (rosado)</span>
+        <span><span style="color:#ffaa00;"> A → B</span> (naranja - unidireccional)</span>
+        <span><span style="color:#44ff44;">B → A</span> (verde - unidireccional inversa)</span>
+        <span><span style="color:#ffaa00; background: linear-gradient(45deg, #ffaa00, #44ff44); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;"> A ⬌ B</span> (doble color - bidireccional)</span>
+        <span><span style="color:#ff33ff;">↻ Bucle</span> (rosado - doble click)</span>
+        <span><span style="color:#ff3333;">🗑️ Modo Eliminar</span> (tecla D - borde rojo)</span>
+    </div>
+
+    <!-- Panel de Exportar/Importar -->
+    <div class="export-panel">
+        <button class="export-btn" onclick="exportarGrafo()">
+            💾 EXPORTAR GRAFO
+        </button>
+        <button class="export-btn importar" onclick="document.getElementById('fileInput').click()">
+            📂 IMPORTAR GRAFO
+        </button>
+        <button class="export-btn limpiar" onclick="limpiarTodo()">
+            🗑️ LIMPIAR TODO
+        </button>
+        <input type="file" id="fileInput" class="file-input" accept=".json" onchange="importarGrafo(event)">
+    </div>
+
+    <!-- Menú contextual para editar valores -->
+    <div class="context-menu" id="contextMenu">
+        <div class="context-menu-titulo" id="contextMenuTitulo">EDITAR VALOR</div>
+        <input type="number" id="contextMenuValor" class="context-menu-input" step="0.5" min="0" value="1">
+        <div class="context-menu-botones">
+            <button class="context-menu-btn" onclick="guardarEdicionValor()">GUARDAR</button>
+            <button class="context-menu-btn cancelar" onclick="cerrarContextMenu()">CANCELAR</button>
+        </div>
+    </div>
+
+    <!-- Modal de edición de nodo -->
+    <div class="modal-overlay" id="modalOverlay"></div>
+    <div class="modal-edicion" id="modalEdicionNodo">
+        <div class="modal-titulo" id="modalTitulo">EDITAR NODO</div>
+        <input type="text" id="modalNodoId" class="modal-input" placeholder="Nombre del nodo (ej: A, B, 1, X)">
+        <select id="modalNodoColor" class="modal-select">
+            <option value="#00ff00">Verde</option>
+            <option value="#ff3333">Rojo</option>
+            <option value="#3333ff">Azul</option>
+        </select>
+        <div class="modal-botones">
+            <button class="modal-boton" onclick="guardarEdicionNodo()">GUARDAR</button>
+            <button class="modal-boton cancelar" onclick="cerrarModalNodo()">CANCELAR</button>
+        </div>
     </div>
 
     <!-- PANEL DE CONTROL -->
@@ -203,7 +500,7 @@
                 <input type="number" id="valorBucle" value="1" min="0" step="0.5">
             </div>
             
-            <!-- Color de nodo -->
+            <!-- Color de nodo por defecto -->
             <div class="caja">
                 <label>COLOR NODO</label>
                 <select id="colorNodo">
@@ -215,26 +512,22 @@
         </div>
     </div>
 
-    <!-- Botón limpiar -->
-    <div style="text-align: center;">
-        <button class="boton rojo" onclick="limpiarTodo()">LIMPIAR TODO</button>
-    </div>
-
     <!-- Contadores -->
     <div class="info-bar">
         <span>🔵 NODOS: <span id="contadorNodos">0</span></span>
         <span>🟢 CONEXIONES: <span id="contadorConexiones">0</span></span>
         <span>⚪ MODO: <span id="modoActual">Listo</span></span>
+        <span id="indicadorEliminar" style="color: #ff3333; font-weight: bold; display: none;">⚠️ MODO ELIMINAR ACTIVADO</span>
     </div>
 
     <!-- Canvas -->
-    <div class="canvas-container">
+    <div class="canvas-container" id="canvasContainer">
         <canvas id="grafoCanvas"></canvas>
     </div>
 
-    <!-- MATRIZ DE ADYACENCIA -->
+    <!-- MATRIZ DE ADYACENCIA CON CONVERGENCIA Y DIVERGENCIA -->
     <div class="matriz-container">
-        <h2 class="matriz-titulo">📊 MATRIZ DE ADYACENCIA</h2>
+        <h2 class="matriz-titulo">📊 MATRIZ DE ADYACENCIA: DIVERGENCIA | CONVERGENCIA | GRADO | TIPO</h2>
         <div id="matrizAdyacencia" class="matriz-vacia">
             No hay nodos para mostrar la matriz
         </div>
@@ -253,9 +546,17 @@
         let siguienteId = 1;
         let nodoSeleccionado = null;
         let modoEliminar = false;
+        let nodoParaEditar = null;
+        let conexionParaEditar = null;
+        let menuVisible = false;
         
         const canvas = document.getElementById('grafoCanvas');
         const ctx = canvas.getContext('2d');
+        const canvasContainer = document.getElementById('canvasContainer');
+        const indicadorEliminar = document.getElementById('indicadorEliminar');
+        const contextMenu = document.getElementById('contextMenu');
+        const contextMenuTitulo = document.getElementById('contextMenuTitulo');
+        const contextMenuValor = document.getElementById('contextMenuValor');
         
         // ===== INICIALIZAR =====
         function resizeCanvas() {
@@ -278,14 +579,16 @@
         
         // ===== EVENTOS DEL CANVAS =====
         canvas.addEventListener('click', function(e) {
+            if (menuVisible) {
+                cerrarContextMenu();
+            }
+            
             const rect = canvas.getBoundingClientRect();
             const x = (e.clientX - rect.left) * (canvas.width / rect.width);
             const y = (e.clientY - rect.top) * (canvas.height / rect.height);
             
             if (modoEliminar) {
                 eliminarNodo(x, y);
-                modoEliminar = false;
-                document.getElementById('modoActual').innerText = 'Listo';
                 return;
             }
             
@@ -301,40 +604,353 @@
                     document.getElementById('modoActual').innerText = `Nodo ${nodoClick.id} seleccionado`;
                 }
             } else {
-                crearNodo(x, y);
+                crearNodo(x, y, siguienteId.toString());
             }
             
             dibujarGrafo();
         });
-        
-        // ===== TECLADO =====
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'd' || e.key === 'D') {
-                modoEliminar = true;
-                document.getElementById('modoActual').innerText = 'Click en nodo para eliminar';
-                e.preventDefault();
-            } else if (e.key === 'Escape') {
-                nodoSeleccionado = null;
-                modoEliminar = false;
-                document.getElementById('modoActual').innerText = 'Listo';
-                dibujarGrafo();
+
+        // DOBLE CLICK para crear BUCLE
+        canvas.addEventListener('dblclick', function(e) {
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+            
+            const nodoClick = encontrarNodo(x, y);
+            if (nodoClick) {
+                const valor = parseFloat(document.getElementById('valorBucle').value);
+                conexiones.push({
+                    origen: nodoClick.id,
+                    destino: nodoClick.id,
+                    valor: valor,
+                    color: '#ff33ff',
+                    tipo: 'bucle',
+                    esBucle: true,
+                    id: Date.now() + Math.random()
+                });
+                actualizarInfo();
+                document.getElementById('modoActual').innerText = `Bucle creado en nodo ${nodoClick.id}`;
+            }
+        });
+
+        // CLICK DERECHO para editar (nodo o conexión)
+        canvas.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+            
+            // Primero verificar si hay un nodo
+            const nodoClick = encontrarNodo(x, y);
+            if (nodoClick) {
+                // Editar nodo (nombre y color)
+                abrirModalNodo(nodoClick);
+                return;
+            }
+            
+            // Si no hay nodo, buscar conexión para editar el valor
+            const conexionCerca = encontrarConexionCerca(x, y);
+            if (conexionCerca) {
+                // Determinar el tipo de conexión para mostrar en el título
+                let tipoTexto = '';
+                if (conexionCerca.origen === conexionCerca.destino) {
+                    tipoTexto = 'BUCLE';
+                } else if (conexionCerca.tipo === 'bidireccional') {
+                    tipoTexto = conexionCerca.color === '#ffaa00' ? 'A → B' : 'B → A';
+                } else {
+                    tipoTexto = 'UNIDIRECCIONAL';
+                }
+                
+                contextMenuTitulo.innerText = `EDITAR ${tipoTexto}: ${conexionCerca.origen} → ${conexionCerca.destino}`;
+                contextMenuValor.value = conexionCerca.valor;
+                conexionParaEditar = conexionCerca;
+                
+                // Posicionar el menú cerca del click
+                contextMenu.style.left = (e.clientX - 125) + 'px';
+                contextMenu.style.top = (e.clientY - 80) + 'px';
+                contextMenu.classList.add('active');
+                menuVisible = true;
+            }
+        });
+
+        // Cerrar menú contextual al hacer click fuera
+        document.addEventListener('click', function(e) {
+            if (menuVisible && !contextMenu.contains(e.target)) {
+                cerrarContextMenu();
+            }
+        });
+
+        // Resetear cursor al salir del canvas
+        canvas.addEventListener('mouseleave', function() {
+            if (!modoEliminar) {
+                canvas.style.cursor = 'crosshair';
             }
         });
         
+        // ===== TECLADO MEJORADO =====
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'd' || e.key === 'D') {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                modoEliminar = !modoEliminar;
+                
+                if (modoEliminar) {
+                    activarModoEliminar();
+                } else {
+                    desactivarModoEliminar();
+                }
+                
+                return false;
+            } 
+            else if (e.key === 'Escape') {
+                e.preventDefault();
+                
+                if (menuVisible) {
+                    cerrarContextMenu();
+                } else {
+                    nodoSeleccionado = null;
+                    if (modoEliminar) {
+                        desactivarModoEliminar();
+                    }
+                    cerrarModalNodo();
+                    document.getElementById('modoActual').innerText = 'Listo';
+                    dibujarGrafo();
+                }
+            }
+        });
+
+        // Funciones para controlar modo eliminar
+        function activarModoEliminar() {
+            modoEliminar = true;
+            canvasContainer.classList.add('modo-eliminar');
+            indicadorEliminar.style.display = 'inline';
+            document.getElementById('modoActual').innerText = 'MODO ELIMINAR ACTIVADO';
+            canvas.style.cursor = 'crosshair';
+        }
+
+        function desactivarModoEliminar() {
+            modoEliminar = false;
+            canvasContainer.classList.remove('modo-eliminar');
+            indicadorEliminar.style.display = 'none';
+            document.getElementById('modoActual').innerText = 'Listo';
+            canvas.style.cursor = 'crosshair';
+        }
+
+        // Funciones del menú contextual
+        function cerrarContextMenu() {
+            contextMenu.classList.remove('active');
+            menuVisible = false;
+            conexionParaEditar = null;
+        }
+
+        function guardarEdicionValor() {
+            if (!conexionParaEditar) return;
+            
+            const nuevoValor = parseFloat(contextMenuValor.value);
+            
+            if (isNaN(nuevoValor) || nuevoValor < 0) {
+                alert('Ingresa un valor válido (mayor o igual a 0)');
+                return;
+            }
+            
+            // Actualizar el valor de la conexión
+            conexionParaEditar.valor = nuevoValor;
+            
+            cerrarContextMenu();
+            actualizarInfo();
+            document.getElementById('modoActual').innerText = 'Valor actualizado';
+        }
+        
+        // ===== FUNCIONES DE EXPORTAR/IMPORTAR =====
+        function exportarGrafo() {
+            const grafoData = {
+                nodos: nodos.map(n => ({ ...n })),
+                conexiones: conexiones.map(c => ({ ...c })),
+                siguienteId: siguienteId
+            };
+            
+            const dataStr = JSON.stringify(grafoData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `grafo_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            document.getElementById('modoActual').innerText = 'Grafo exportado';
+        }
+
+        function importarGrafo(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const grafoData = JSON.parse(e.target.result);
+                    
+                    if (!grafoData.nodos || !grafoData.conexiones) {
+                        throw new Error('Formato de archivo inválido');
+                    }
+                    
+                    nodos = grafoData.nodos;
+                    conexiones = grafoData.conexiones;
+                    siguienteId = grafoData.siguienteId || 1;
+                    
+                    nodoSeleccionado = null;
+                    desactivarModoEliminar();
+                    
+                    actualizarInfo();
+                    document.getElementById('modoActual').innerText = 'Grafo importado correctamente';
+                    
+                } catch (error) {
+                    alert('Error al importar el archivo: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+            
+            event.target.value = '';
+        }
+        
+        // ===== FUNCIONES DE MODALES =====
+        function abrirModalNodo(nodo) {
+            nodoParaEditar = nodo;
+            document.getElementById('modalTitulo').innerText = `EDITAR NODO ${nodo.id}`;
+            document.getElementById('modalNodoId').value = nodo.id;
+            document.getElementById('modalNodoColor').value = nodo.color;
+            document.getElementById('modalOverlay').classList.add('active');
+            document.getElementById('modalEdicionNodo').classList.add('active');
+        }
+
+        function cerrarModalNodo() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            document.getElementById('modalEdicionNodo').classList.remove('active');
+            nodoParaEditar = null;
+        }
+
+        function guardarEdicionNodo() {
+            if (!nodoParaEditar) return;
+
+            const nuevoId = document.getElementById('modalNodoId').value.trim();
+            const nuevoColor = document.getElementById('modalNodoColor').value;
+
+            if (!nuevoId) {
+                alert('El nombre del nodo no puede estar vacío');
+                return;
+            }
+
+            if (nuevoId !== nodoParaEditar.id && nodos.some(n => n.id === nuevoId)) {
+                alert(`El nombre "${nuevoId}" ya está en uso por otro nodo`);
+                return;
+            }
+
+            // Actualizar conexiones que referencian a este nodo
+            conexiones.forEach(conn => {
+                if (conn.origen === nodoParaEditar.id) conn.origen = nuevoId;
+                if (conn.destino === nodoParaEditar.id) conn.destino = nuevoId;
+            });
+
+            // Actualizar nodo
+            nodoParaEditar.id = nuevoId;
+            nodoParaEditar.color = nuevoColor;
+
+            // Actualizar siguienteId solo si el nuevo ID es numérico y mayor
+            if (!isNaN(nuevoId) && !isNaN(parseInt(nuevoId))) {
+                const numId = parseInt(nuevoId);
+                if (numId >= siguienteId) {
+                    siguienteId = numId + 1;
+                }
+            }
+
+            cerrarModalNodo();
+            actualizarInfo();
+        }
+        
         // ===== FUNCIONES PRINCIPALES =====
-        function crearNodo(x, y) {
+        function crearNodo(x, y, id) {
             nodos.push({
-                id: siguienteId++,
+                id: id,
                 x: x,
                 y: y,
                 color: document.getElementById('colorNodo').value,
                 radio: 20
             });
+            
+            if (!isNaN(id) && !isNaN(parseInt(id))) {
+                const numId = parseInt(id);
+                if (numId >= siguienteId) {
+                    siguienteId = numId + 1;
+                }
+            }
+            
             actualizarInfo();
         }
-        
+
         function encontrarNodo(x, y) {
             return nodos.find(n => Math.hypot(x - n.x, y - n.y) < n.radio);
+        }
+
+        function encontrarConexionCerca(x, y) {
+            for (let conn of conexiones) {
+                const origen = nodos.find(n => n.id === conn.origen);
+                const destino = nodos.find(n => n.id === conn.destino);
+                
+                if (!origen || !destino) continue;
+
+                if (conn.origen === conn.destino) {
+                    // Para bucles, verificar cerca del texto del valor
+                    if (Math.hypot(x - (origen.x + 45), y - (origen.y - 65)) < 30) {
+                        return conn;
+                    }
+                } else {
+                    // Para conexiones normales, verificar cerca del punto medio
+                    const midX = (origen.x + destino.x) / 2;
+                    const midY = (origen.y + destino.y) / 2;
+                    if (Math.hypot(x - midX, y - (midY - 15)) < 30) {
+                        return conn;
+                    }
+                    
+                    // También verificar cerca del valor cuando están desplazados (bidireccionales)
+                    if (conn.tipo === 'bidireccional') {
+                        const anguloBase = Math.atan2(destino.y - origen.y, destino.x - origen.x);
+                        const distancia = Math.hypot(destino.x - origen.x, destino.y - origen.y);
+                        const separacion = Math.min(80, distancia * 0.45);
+                        const perpX = -(destino.y - origen.y) / distancia;
+                        const perpY = (destino.x - origen.x) / distancia;
+                        
+                        let ctrlX, ctrlY;
+                        if (conn.color === '#ffaa00') {
+                            ctrlX = (origen.x + destino.x) / 2 + perpX * separacion * 1.8;
+                            ctrlY = (origen.y + destino.y) / 2 + perpY * separacion * 1.8;
+                            
+                            const valorT = 0.5;
+                            const valorX = (1-valorT)*(1-valorT)*origen.x + 2*(1-valorT)*valorT*ctrlX + valorT*valorT*destino.x;
+                            const valorY = (1-valorT)*(1-valorT)*origen.y + 2*(1-valorT)*valorT*ctrlY + valorT*valorT*destino.y;
+                            
+                            if (Math.hypot(x - (valorX + 20), y - (valorY - 35)) < 30) {
+                                return conn;
+                            }
+                        } else {
+                            ctrlX = (origen.x + destino.x) / 2 + perpX * separacion * 1.8;
+                            ctrlY = (origen.y + destino.y) / 2 + perpY * separacion * 1.8;
+                            
+                            const valorT = 0.5;
+                            const valorX = (1-valorT)*(1-valorT)*origen.x + 2*(1-valorT)*valorT*ctrlX + valorT*valorT*destino.x;
+                            const valorY = (1-valorT)*(1-valorT)*origen.y + 2*(1-valorT)*valorT*ctrlY + valorT*valorT*destino.y;
+                            
+                            if (Math.hypot(x - (valorX - 40), y - (valorY + 30)) < 30) {
+                                return conn;
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
         }
         
         function crearConexion(origenId, destinoId) {
@@ -347,6 +963,7 @@
                     destino: destinoId,
                     valor: valor,
                     color: '#ffaa00',
+                    tipo: 'unidireccional',
                     id: Date.now() + Math.random()
                 });
             } 
@@ -359,6 +976,7 @@
                     destino: destinoId,
                     valor: valorAB,
                     color: '#ffaa00',
+                    tipo: 'bidireccional',
                     direccion: 'AB',
                     id: Date.now() + Math.random()
                 });
@@ -368,6 +986,7 @@
                     destino: origenId,
                     valor: valorBA,
                     color: '#44ff44',
+                    tipo: 'bidireccional',
                     direccion: 'BA',
                     id: Date.now() + Math.random() + 1
                 });
@@ -379,6 +998,7 @@
                     destino: origenId,
                     valor: valor,
                     color: '#ff33ff',
+                    tipo: 'bucle',
                     esBucle: true,
                     id: Date.now() + Math.random()
                 });
@@ -399,6 +1019,7 @@
                 
                 actualizarInfo();
                 dibujarGrafo();
+                document.getElementById('modoActual').innerText = `Nodo ${nodo.id} eliminado`;
             }
         }
         
@@ -408,7 +1029,9 @@
                 conexiones = [];
                 siguienteId = 1;
                 nodoSeleccionado = null;
-                modoEliminar = false;
+                desactivarModoEliminar();
+                cerrarModalNodo();
+                cerrarContextMenu();
                 actualizarInfo();
                 document.getElementById('modoActual').innerText = 'Listo';
             }
@@ -422,7 +1045,7 @@
             dibujarGrafo();
         }
         
-        // ===== MATRIZ DE ADYACENCIA - VERSIÓN ORDENADA =====
+        // ===== MATRIZ DE ADYACENCIA CON CONVERGENCIA Y DIVERGENCIA =====
         function actualizarMatriz() {
             const divMatriz = document.getElementById('matrizAdyacencia');
             
@@ -432,30 +1055,73 @@
             }
             
             // Ordenar nodos por ID
-            const nodosOrdenados = [...nodos].sort((a, b) => a.id - b.id);
+            const nodosOrdenados = [...nodos].sort((a, b) => {
+                if (isNaN(a.id) || isNaN(b.id)) {
+                    return a.id.toString().localeCompare(b.id.toString());
+                }
+                return parseInt(a.id) - parseInt(b.id);
+            });
             const n = nodosOrdenados.length;
             
             // Crear matriz de adyacencia
             const matriz = Array(n).fill().map(() => Array(n).fill(0));
             
-            // Llenar matriz con los valores de las conexiones
+            // Mapa para identificar tipos de conexiones
+            const tiposConexion = Array(n).fill().map(() => Array(n).fill(''));
+            
+            // Llenar matriz con los valores de las conexiones y registrar tipos
             conexiones.forEach(conn => {
                 const idxOrigen = nodosOrdenados.findIndex(n => n.id === conn.origen);
                 const idxDestino = nodosOrdenados.findIndex(n => n.id === conn.destino);
                 
                 if (idxOrigen !== -1 && idxDestino !== -1) {
-                    matriz[idxOrigen][idxDestino] += conn.valor;
+                    matriz[idxOrigen][idxDestino] = conn.valor;
+                    
+                    // Determinar tipo para colorear
+                    if (conn.origen === conn.destino) {
+                        tiposConexion[idxOrigen][idxDestino] = 'bucle';
+                    } else {
+                        // Verificar si hay conexión inversa
+                        const tieneInversa = conexiones.some(c => 
+                            c.origen === conn.destino && c.destino === conn.origen
+                        );
+                        
+                        if (tieneInversa) {
+                            tiposConexion[idxOrigen][idxDestino] = 'bidireccional';
+                        } else {
+                            tiposConexion[idxOrigen][idxDestino] = 'unidireccional';
+                        }
+                    }
                 }
             });
             
-            // Calcular sumatorias
-            const sumaFilas = matriz.map(fila => fila.reduce((a, b) => a + b, 0));
-            const sumaColumnas = Array(n).fill(0);
+            // Calcular divergencia (lo que SALE del nodo)
+            const divergencia = matriz.map(fila => fila.reduce((a, b) => a + b, 0));
+            
+            // Calcular convergencia (lo que ENTRA al nodo)
+            const convergencia = Array(n).fill(0);
             for (let j = 0; j < n; j++) {
                 for (let i = 0; i < n; i++) {
-                    sumaColumnas[j] += matriz[i][j];
+                    convergencia[j] += matriz[i][j];
                 }
             }
+            
+            // Calcular bucles (valores en la diagonal)
+            const bucles = matriz.map((fila, i) => fila[i]);
+            
+            // Calcular grados CORRECTAMENTE: divergencia + convergencia - bucles
+            const grados = divergencia.map((div, i) => div + convergencia[i] - bucles[i]);
+            
+            // Determinar tipo de nodo
+            const tiposNodo = nodosOrdenados.map((nodo, i) => {
+                const div = divergencia[i];
+                const conv = convergencia[i];
+                
+                if (div > 0 && conv > 0) return { texto: '🟣 HUB', color: '#aa88ff' };
+                if (div > 0 && conv === 0) return { texto: '🟢 DIVERGENTE', color: '#44ff44' };
+                if (div === 0 && conv > 0) return { texto: '🔵 CONVERGENTE', color: '#44aaff' };
+                return { texto: '⚪ AISLADO', color: '#888888' };
+            });
             
             // Generar HTML de la matriz
             let html = '<div class="matriz" style="display: inline-block;">';
@@ -466,7 +1132,10 @@
             for (let j = 0; j < n; j++) {
                 html += `<div class="matriz-col-header">→ ${nodosOrdenados[j].id}</div>`;
             }
-            html += '<div class="matriz-header">Σ Fila</div>';
+            html += '<div class="matriz-header">DIVERGENCIA</div>';
+            html += '<div class="matriz-header">CONVERGENCIA</div>';
+            html += '<div class="matriz-header">GRADO</div>';
+            html += '<div class="matriz-header">TIPO</div>';
             html += '</div>';
             
             // Filas de la matriz
@@ -476,30 +1145,43 @@
                 
                 for (let j = 0; j < n; j++) {
                     const valor = matriz[i][j];
-                    const color = valor > 0 ? (i === j ? '#ff33ff' : '#00ff00') : '#666';
-                    html += `<div class="matriz-celda" style="color: ${color};">${valor.toFixed(1)}</div>`;
+                    const tipo = tiposConexion[i][j];
+                    
+                    let claseCss = 'matriz-celda';
+                    if (tipo === 'bucle') claseCss += ' bucle';
+                    else if (tipo === 'bidireccional') claseCss += ' bidireccional';
+                    else if (tipo === 'unidireccional') {
+                        if (i < j) claseCss += ' unidireccional-origen';
+                        else claseCss += ' unidireccional-destino';
+                    }
+                    
+                    let colorTexto = '#ffffff';
+                    if (tipo === 'bucle') colorTexto = '#ff33ff';
+                    else if (tipo === 'bidireccional') colorTexto = '#ffaa00';
+                    else if (tipo === 'unidireccional') colorTexto = i < j ? '#ffaa00' : '#44ff44';
+                    
+                    html += `<div class="${claseCss}" style="color: ${colorTexto};">${valor.toFixed(1)}</div>`;
                 }
                 
-                html += `<div class="matriz-suma">${sumaFilas[i].toFixed(1)}</div>`;
+                html += `<div class="matriz-suma">${divergencia[i].toFixed(1)}</div>`;
+                html += `<div class="matriz-suma">${convergencia[i].toFixed(1)}</div>`;
+                html += `<div class="matriz-grado">${grados[i].toFixed(1)}</div>`;
+                html += `<div class="matriz-tipo" style="color: ${tiposNodo[i].color};">${tiposNodo[i].texto}</div>`;
                 html += '</div>';
             }
             
-            // Fila de sumas de columnas
-            html += '<div class="matriz-fila">';
-            html += '<div class="matriz-header">Σ Col</div>';
-            for (let j = 0; j < n; j++) {
-                html += `<div class="matriz-suma">${sumaColumnas[j].toFixed(1)}</div>`;
-            }
-            html += '<div class="matriz-header"></div>';
             html += '</div>';
             
-            html += '</div>';
-            
-            // Información adicional (opcional)
-            html += `<div style="text-align: center; margin-top: 15px; color: #00ff00; font-size: 14px;">
-                <span style="color:#ffaa00;">Naranja: Salidas</span> | 
-                <span style="color:#44ff44;">Verde: Entradas</span> | 
-                <span style="color:#ff33ff;">Rosado: Bucles</span>
+            // Leyenda informativa
+            html += `<div style="text-align: center; margin-top: 20px; color: #00ff00; font-size: 14px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                <span style="color:#ffaa00;">🟠 Unidireccional (salida)</span>
+                <span style="color:#44ff44;">🟢 Unidireccional (entrada)</span>
+                <span style="background: linear-gradient(45deg, #ffaa00, #44ff44); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: bold;">🟡 Bidireccional</span>
+                <span style="color:#ff33ff;">🟣 Bucle</span>
+                <span style="color:#44ff44;">🟢 DIVERGENTE: Solo sale</span>
+                <span style="color:#44aaff;">🔵 CONVERGENTE: Solo entra</span>
+                <span style="color:#aa88ff;">🟣 HUB: Entra y sale</span>
+                <span style="color:#ffff00;">⭐ GRADO = Divergencia + Convergencia - Bucles</span>
             </div>`;
             
             divMatriz.innerHTML = html;
@@ -552,6 +1234,8 @@
                     ctx.strokeStyle = conn.color;
                     ctx.lineWidth = 3;
                     ctx.setLineDash([]);
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = conn.color;
                     
                     ctx.moveTo(origen.x + 25, origen.y - 10);
                     ctx.quadraticCurveTo(origen.x + 60, origen.y - 70, origen.x - 15, origen.y - 40);
@@ -587,6 +1271,7 @@
                     const separacion = Math.min(80, distancia * 0.45);
                     
                     if (esBidireccional) {
+                        // BIDIRECCIONAL
                         const perpX = -(destino.y - origen.y) / distancia;
                         const perpY = (destino.x - origen.x) / distancia;
                         
@@ -605,22 +1290,17 @@
                         
                         let startX, startY, endX, endY;
                         
-                        if (conn.color === '#ffaa00') {
-                            startX = origen.x + Math.cos(anguloBase + anguloOffset) * origen.radio;
-                            startY = origen.y + Math.sin(anguloBase + anguloOffset) * origen.radio;
-                            endX = destino.x + Math.cos(anguloBase + Math.PI + anguloOffset) * destino.radio;
-                            endY = destino.y + Math.sin(anguloBase + Math.PI + anguloOffset) * destino.radio;
-                        } else {
-                            startX = origen.x + Math.cos(anguloBase + anguloOffset) * origen.radio;
-                            startY = origen.y + Math.sin(anguloBase + anguloOffset) * origen.radio;
-                            endX = destino.x + Math.cos(anguloBase + Math.PI + anguloOffset) * destino.radio;
-                            endY = destino.y + Math.sin(anguloBase + Math.PI + anguloOffset) * destino.radio;
-                        }
+                        startX = origen.x + Math.cos(anguloBase + anguloOffset) * origen.radio;
+                        startY = origen.y + Math.sin(anguloBase + anguloOffset) * origen.radio;
+                        endX = destino.x + Math.cos(anguloBase + Math.PI + anguloOffset) * destino.radio;
+                        endY = destino.y + Math.sin(anguloBase + Math.PI + anguloOffset) * destino.radio;
                         
                         ctx.beginPath();
                         ctx.strokeStyle = conn.color;
                         ctx.lineWidth = 3;
                         ctx.setLineDash([]);
+                        ctx.shadowBlur = 12;
+                        ctx.shadowColor = conn.color;
                         ctx.moveTo(startX, startY);
                         ctx.quadraticCurveTo(ctrlX, ctrlY, endX, endY);
                         ctx.stroke();
@@ -647,6 +1327,7 @@
                         }
                         
                     } else {
+                        // UNIDIRECCIONAL
                         const startX = origen.x + Math.cos(anguloBase) * origen.radio;
                         const startY = origen.y + Math.sin(anguloBase) * origen.radio;
                         const endX = destino.x - Math.cos(anguloBase) * destino.radio;
@@ -656,6 +1337,8 @@
                         ctx.strokeStyle = conn.color;
                         ctx.lineWidth = 3;
                         ctx.setLineDash(conn.color === '#ffaa00' ? [8, 4] : [4, 4]);
+                        ctx.shadowBlur = 10;
+                        ctx.shadowColor = conn.color;
                         ctx.moveTo(startX, startY);
                         ctx.lineTo(endX, endY);
                         ctx.stroke();
