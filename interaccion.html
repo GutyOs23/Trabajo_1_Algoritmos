@@ -77,12 +77,12 @@
 
         .matriz-fila {
             display: grid;
-            grid-template-columns: 80px repeat(10, 80px) 100px 100px 100px 150px;
+            grid-template-columns: 80px repeat(10, 80px) 100px 100px 150px;
             gap: 2px;
             align-items: center;
         }
 
-        .matriz-header, .matriz-col-header, .matriz-celda, .matriz-suma, .matriz-grado, .matriz-tipo {
+        .matriz-header, .matriz-col-header, .matriz-celda, .matriz-suma-fila, .matriz-suma-columna, .matriz-grado, .matriz-tipo {
             padding: 10px;
             text-align: center;
             font-weight: bold;
@@ -131,10 +131,17 @@
             border-width: 2px;
         }
 
-        .matriz-suma {
+        .matriz-suma-fila {
             background: #1a3a1a;
-            color: #00ff00;
-            border: 2px solid #00ff00;
+            color: #ffaa00;
+            border: 2px solid #ffaa00;
+            font-weight: bold;
+        }
+
+        .matriz-suma-columna {
+            background: #1a3a1a;
+            color: #44ff44;
+            border: 2px solid #44ff44;
             font-weight: bold;
         }
 
@@ -215,6 +222,77 @@
 
         .file-input {
             display: none;
+        }
+
+        /* Modal de exportación */
+        .modal-export {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #0a1a0a;
+            border: 3px solid #00ff00;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 0 50px #00ff00;
+            z-index: 1000;
+            min-width: 350px;
+            display: none;
+        }
+
+        .modal-export.active {
+            display: block;
+        }
+
+        .modal-export-titulo {
+            color: #00ff00;
+            font-size: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-export-input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background: #0a0f0a;
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .modal-export-botones {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .modal-export-boton {
+            padding: 10px 20px;
+            border: 2px solid #00ff00;
+            border-radius: 8px;
+            background: transparent;
+            color: #00ff00;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .modal-export-boton:hover {
+            background: #00ff00;
+            color: #0a1a0a;
+        }
+
+        .modal-export-boton.cancelar {
+            border-color: #ff3333;
+            color: #ff3333;
+        }
+
+        .modal-export-boton.cancelar:hover {
+            background: #ff3333;
+            color: #0a1a0a;
         }
 
         /* Panel de edición contextual */
@@ -424,7 +502,7 @@
 
     <!-- Panel de Exportar/Importar -->
     <div class="export-panel">
-        <button class="export-btn" onclick="exportarGrafo()">
+        <button class="export-btn" onclick="abrirModalExportacion()">
             💾 EXPORTAR GRAFO
         </button>
         <button class="export-btn importar" onclick="document.getElementById('fileInput').click()">
@@ -434,6 +512,17 @@
             🗑️ LIMPIAR TODO
         </button>
         <input type="file" id="fileInput" class="file-input" accept=".json" onchange="importarGrafo(event)">
+    </div>
+
+    <!-- Modal de exportación con nombre personalizado -->
+    <div class="modal-overlay" id="modalExportOverlay"></div>
+    <div class="modal-export" id="modalExport">
+        <div class="modal-export-titulo">📁 NOMBRE DEL ARCHIVO</div>
+        <input type="text" id="exportFileName" class="modal-export-input" placeholder="Ej: mi_grafo" value="grafo">
+        <div class="modal-export-botones">
+            <button class="modal-export-boton" onclick="exportarGrafoConNombre()">EXPORTAR</button>
+            <button class="modal-export-boton cancelar" onclick="cerrarModalExportacion()">CANCELAR</button>
+        </div>
     </div>
 
     <!-- Menú contextual para editar valores -->
@@ -525,9 +614,9 @@
         <canvas id="grafoCanvas"></canvas>
     </div>
 
-    <!-- MATRIZ DE ADYACENCIA CON CONVERGENCIA Y DIVERGENCIA -->
+    <!-- MATRIZ DE ADYACENCIA CON SUMATORIA DE FILAS Y COLUMNAS -->
     <div class="matriz-container">
-        <h2 class="matriz-titulo">📊 MATRIZ DE ADYACENCIA: DIVERGENCIA | CONVERGENCIA | GRADO | TIPO</h2>
+        <h2 class="matriz-titulo">📊 MATRIZ DE ADYACENCIA: SUMATORIA FILAS | SUMATORIA COLUMNAS | GRADO | TIPO</h2>
         <div id="matrizAdyacencia" class="matriz-vacia">
             No hay nodos para mostrar la matriz
         </div>
@@ -716,6 +805,7 @@
                         desactivarModoEliminar();
                     }
                     cerrarModalNodo();
+                    cerrarModalExportacion();
                     document.getElementById('modoActual').innerText = 'Listo';
                     dibujarGrafo();
                 }
@@ -765,7 +855,27 @@
         }
         
         // ===== FUNCIONES DE EXPORTAR/IMPORTAR =====
-        function exportarGrafo() {
+        function abrirModalExportacion() {
+            document.getElementById('modalExportOverlay').classList.add('active');
+            document.getElementById('modalExport').classList.add('active');
+            document.getElementById('exportFileName').value = 'grafo';
+        }
+
+        function cerrarModalExportacion() {
+            document.getElementById('modalExportOverlay').classList.remove('active');
+            document.getElementById('modalExport').classList.remove('active');
+        }
+
+        function exportarGrafoConNombre() {
+            let nombreArchivo = document.getElementById('exportFileName').value.trim();
+            
+            if (!nombreArchivo) {
+                nombreArchivo = 'grafo';
+            }
+            
+            // Eliminar caracteres no válidos para nombre de archivo
+            nombreArchivo = nombreArchivo.replace(/[^a-zA-Z0-9_\-]/g, '_');
+            
             const grafoData = {
                 nodos: nodos.map(n => ({ ...n })),
                 conexiones: conexiones.map(c => ({ ...c })),
@@ -775,13 +885,15 @@
             const dataStr = JSON.stringify(grafoData, null, 2);
             const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
             
-            const exportFileDefaultName = `grafo_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.json`;
+            const fecha = new Date().toISOString().slice(0,19).replace(/:/g, '-');
+            const exportFileDefaultName = `${nombreArchivo}_${fecha}.json`;
             
             const linkElement = document.createElement('a');
             linkElement.setAttribute('href', dataUri);
             linkElement.setAttribute('download', exportFileDefaultName);
             linkElement.click();
             
+            cerrarModalExportacion();
             document.getElementById('modoActual').innerText = 'Grafo exportado';
         }
 
@@ -1032,6 +1144,7 @@
                 desactivarModoEliminar();
                 cerrarModalNodo();
                 cerrarContextMenu();
+                cerrarModalExportacion();
                 actualizarInfo();
                 document.getElementById('modoActual').innerText = 'Listo';
             }
@@ -1045,7 +1158,7 @@
             dibujarGrafo();
         }
         
-        // ===== MATRIZ DE ADYACENCIA CON CONVERGENCIA Y DIVERGENCIA =====
+        // ===== MATRIZ DE ADYACENCIA CON SUMATORIA DE FILAS Y COLUMNAS =====
         function actualizarMatriz() {
             const divMatriz = document.getElementById('matrizAdyacencia');
             
@@ -1095,31 +1208,31 @@
                 }
             });
             
-            // Calcular divergencia (lo que SALE del nodo)
-            const divergencia = matriz.map(fila => fila.reduce((a, b) => a + b, 0));
+            // Calcular sumatoria de filas (lo que SALE del nodo)
+            const sumaFilas = matriz.map(fila => fila.reduce((a, b) => a + b, 0));
             
-            // Calcular convergencia (lo que ENTRA al nodo)
-            const convergencia = Array(n).fill(0);
+            // Calcular sumatoria de columnas (lo que ENTRA al nodo)
+            const sumaColumnas = Array(n).fill(0);
             for (let j = 0; j < n; j++) {
                 for (let i = 0; i < n; i++) {
-                    convergencia[j] += matriz[i][j];
+                    sumaColumnas[j] += matriz[i][j];
                 }
             }
             
             // Calcular bucles (valores en la diagonal)
             const bucles = matriz.map((fila, i) => fila[i]);
             
-            // Calcular grados CORRECTAMENTE: divergencia + convergencia - bucles
-            const grados = divergencia.map((div, i) => div + convergencia[i] - bucles[i]);
+            // Calcular grados: sumaFilas + sumaColumnas - bucles
+            const grados = sumaFilas.map((sf, i) => sf + sumaColumnas[i] - bucles[i]);
             
             // Determinar tipo de nodo
             const tiposNodo = nodosOrdenados.map((nodo, i) => {
-                const div = divergencia[i];
-                const conv = convergencia[i];
+                const sf = sumaFilas[i];
+                const sc = sumaColumnas[i];
                 
-                if (div > 0 && conv > 0) return { texto: '🟣 HUB', color: '#aa88ff' };
-                if (div > 0 && conv === 0) return { texto: '🟢 DIVERGENTE', color: '#44ff44' };
-                if (div === 0 && conv > 0) return { texto: '🔵 CONVERGENTE', color: '#44aaff' };
+                if (sf > 0 && sc > 0) return { texto: '🟣 HUB', color: '#aa88ff' };
+                if (sf > 0 && sc === 0) return { texto: '🟢 SOLO SALE', color: '#44ff44' };
+                if (sf === 0 && sc > 0) return { texto: '🔵 SOLO ENTRA', color: '#44aaff' };
                 return { texto: '⚪ AISLADO', color: '#888888' };
             });
             
@@ -1132,8 +1245,8 @@
             for (let j = 0; j < n; j++) {
                 html += `<div class="matriz-col-header">→ ${nodosOrdenados[j].id}</div>`;
             }
-            html += '<div class="matriz-header">DIVERGENCIA</div>';
-            html += '<div class="matriz-header">CONVERGENCIA</div>';
+            html += '<div class="matriz-header">Σ FILAS (SALE)</div>';
+            html += '<div class="matriz-header">Σ COLUMNAS (ENTRA)</div>';
             html += '<div class="matriz-header">GRADO</div>';
             html += '<div class="matriz-header">TIPO</div>';
             html += '</div>';
@@ -1163,8 +1276,8 @@
                     html += `<div class="${claseCss}" style="color: ${colorTexto};">${valor.toFixed(1)}</div>`;
                 }
                 
-                html += `<div class="matriz-suma">${divergencia[i].toFixed(1)}</div>`;
-                html += `<div class="matriz-suma">${convergencia[i].toFixed(1)}</div>`;
+                html += `<div class="matriz-suma-fila">${sumaFilas[i].toFixed(1)}</div>`;
+                html += `<div class="matriz-suma-columna">${sumaColumnas[i].toFixed(1)}</div>`;
                 html += `<div class="matriz-grado">${grados[i].toFixed(1)}</div>`;
                 html += `<div class="matriz-tipo" style="color: ${tiposNodo[i].color};">${tiposNodo[i].texto}</div>`;
                 html += '</div>';
@@ -1178,10 +1291,12 @@
                 <span style="color:#44ff44;">🟢 Unidireccional (entrada)</span>
                 <span style="background: linear-gradient(45deg, #ffaa00, #44ff44); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: bold;">🟡 Bidireccional</span>
                 <span style="color:#ff33ff;">🟣 Bucle</span>
-                <span style="color:#44ff44;">🟢 DIVERGENTE: Solo sale</span>
-                <span style="color:#44aaff;">🔵 CONVERGENTE: Solo entra</span>
-                <span style="color:#aa88ff;">🟣 HUB: Entra y sale</span>
-                <span style="color:#ffff00;">⭐ GRADO = Divergencia + Convergencia - Bucles</span>
+                <span style="color:#ffaa00;">🟠 Σ FILAS: Suma de salidas</span>
+                <span style="color:#44ff44;">🟢 Σ COLUMNAS: Suma de entradas</span>
+                <span style="color:#44ff44;">🟢 SOLO SALE: Solo salidas</span>
+                <span style="color:#44aaff;">🔵 SOLO ENTRA: Solo entradas</span>
+                <span style="color:#aa88ff;">🟣 HUB: Entradas y salidas</span>
+                <span style="color:#ffff00;">⭐ GRADO = Σ Filas + Σ Columnas - Bucles</span>
             </div>`;
             
             divMatriz.innerHTML = html;
